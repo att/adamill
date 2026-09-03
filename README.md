@@ -17,3 +17,59 @@ AdaMill is a foundational large language model engineered for advanced software 
 | **AI2 Tülu Instruction Mix** | 0.5B | 0.35% | 2.0 | Conversational formatting mix for multi-turn prompt compliance. | [AllenAI Tülu 3 SFT Mixture](https://huggingface.co/datasets/allenai/tulu-3-sft-mixture) |
 | **SWE-bench M Frontend Logic** | 0.4B | 0.28% | 2.0 | DOM manipulation and browser console traces mapped from UI interactions. | [Hugging Face SWE-bench Multimodal](https://huggingface.co/datasets/swe-bench/SWE-bench_Multimodal) |
 | **OpenHands Environment Traces** | 0.3B | 0.21% | 4.0 | Terminal interactions, bash return codes, and error-recovery patterns. | [All-Hands AI OpenHands](https://github.com/All-Hands-AI/OpenHands) |
+
+## Dataset Ingestion & Download Utilities
+
+The [`download_datasets.py`](./download_datasets.py) utility manages high-throughput downloads of raw files directly into target storage partitions, bypassing Hugging Face cache symlink complexity.
+
+### Environment Configuration
+Configure your target destination directory and (optional) Hugging Face token before downloading:
+
+```bash
+# Set your target datasets storage directory
+export DATASETS_DIR="/mnt/powerscale/data/datasets"
+
+# (Optional) Export your Hugging Face API token for gated datasets / higher rate limits
+export HF_TOKEN="<YOUR_HF_TOKEN>"
+```
+
+Alternatively, you can authenticate globally on your machine using `huggingface-cli login`, which will be automatically detected.
+
+### Listing Available Datasets
+To view all dataset keys, token counts, and gating status in download order:
+```bash
+python download_datasets.py --list
+```
+
+### Downloading One-by-One
+You can pull down individual datasets by key with custom parallel workers (e.g. `--workers 16` or `--workers 24`):
+
+```bash
+# 1. Download Public Git-based repositories
+python download_datasets.py --dataset swe-atlas
+python download_datasets.py --dataset fvapps
+
+# 2. Download Public SFT & Evaluation trace splits
+python download_datasets.py --dataset swe-bench-multimodal
+python download_datasets.py --dataset swe-bench
+python download_datasets.py --dataset tulu-3-sft-mixture
+
+# 3. Download Public Symbolic Logic & Reasoning splits
+python download_datasets.py --dataset lean4-mathlib
+python download_datasets.py --dataset minerva-math --workers 16
+
+# 4. Download Gated FIM Code Pretraining split
+# Requires HF_TOKEN in env, huggingface-cli login, or passing --token
+python download_datasets.py --dataset starcoderdata --workers 16
+
+# 5. Download Public Code & Web Pretraining pools
+python download_datasets.py --dataset nemotron-pretraining-code-v3 --workers 16
+python download_datasets.py --dataset essential-web --workers 16
+python download_datasets.py --dataset dolma3.5-pool --workers 24
+```
+
+### Sequential Batch Ingestion
+To pull all datasets sequentially into `DATASETS_DIR`:
+```bash
+python download_datasets.py --workers 16
+```
