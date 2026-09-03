@@ -1,6 +1,7 @@
-# adamill
+# AdaMill
+AdaMill is a foundational large language model engineered for advanced software intelligence, repository-scale reasoning, and autonomous agent workflows.
 
-# Token Allocation, Loss Masking, & Dataset Sources
+## Token Allocation, Loss Masking, & Dataset Sources
 
 | Dataset Component | Volume | Sampling | Epochs | Strategic Role & Loss Masking Rules | Dataset Source Link |
 | :--- | :--- | :--- | :--- | :--- | :--- |
